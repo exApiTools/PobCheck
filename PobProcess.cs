@@ -56,10 +56,16 @@ public class PobProcess
     public async ValueTask DisposeAsync()
     {
         _process?.Kill();
+        GC.SuppressFinalize(this);
         if (_exitTask is { } task)
         {
             await task;
         }
+    }
+
+    ~PobProcess()
+    {
+        _process?.Kill();
     }
 
     public bool IsRunning => _process?.HasExited == false;
